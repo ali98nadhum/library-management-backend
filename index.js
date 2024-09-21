@@ -14,9 +14,13 @@ const app = express();
 
 
 // Middleware
+app.use(express.json());
 app.use(cors({
     origin: "*",
 }));
+
+// Routes
+app.use("/api/category" , require("./routes/categoryRoute"));
 
 
 // Run Server

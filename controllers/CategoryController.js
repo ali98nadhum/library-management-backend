@@ -38,6 +38,7 @@ module.exports.createCategory = asyncHandler(async (req, res) => {
     res.status(201).json({message: "تم اضافه القسم بنجاح"})
 
   } catch (error) {
+    console.error("Error occurred while creating category:", error); // عرض تفاصيل الخطأ
     res.status(500).json({ message: "فشل في اضافه القسم" });
   }
 });
