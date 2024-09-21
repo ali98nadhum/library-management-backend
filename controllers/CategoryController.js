@@ -5,6 +5,23 @@ const {
   ValidateUpdateCategory,
 } = require("../models/CategoryModel");
 
+
+
+// ==================================
+// @desc Git All Category
+// @route /api/category
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.getAllCategory = asyncHandler(async (req , res) => {
+    try {
+        const categories = await CategoryModel.find();
+        res.json({data: categories});
+    } catch (error) {
+        res.status(404).json({message: "فشل في جلب الاقسام"})
+    }
+})
+
 // ==================================
 // @desc Create a new category
 // @route /api/category
