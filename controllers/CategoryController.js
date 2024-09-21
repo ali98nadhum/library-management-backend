@@ -5,22 +5,20 @@ const {
   ValidateUpdateCategory,
 } = require("../models/CategoryModel");
 
-
-
 // ==================================
 // @desc Git All Category
 // @route /api/category
 // @method GET
 // @access private (only admin)
 // ==================================
-module.exports.getAllCategory = asyncHandler(async (req , res) => {
-    try {
-        const categories = await CategoryModel.find();
-        res.json({data: categories});
-    } catch (error) {
-        res.status(404).json({message: "فشل في جلب الاقسام"})
-    }
-})
+module.exports.getAllCategory = asyncHandler(async (req, res) => {
+  try {
+    const categories = await CategoryModel.find();
+    res.json({ data: categories });
+  } catch (error) {
+    res.status(404).json({ message: "فشل في جلب الاقسام" });
+  }
+});
 
 // ==================================
 // @desc Create a new category
@@ -49,13 +47,34 @@ module.exports.createCategory = asyncHandler(async (req, res) => {
 
     // create and save category in database
     const category = await CategoryModel.create({
-        title: req.body.title
-    })
+      title: req.body.title,
+    });
 
-    res.status(201).json({message: "تم اضافه القسم بنجاح"})
-
+    res.status(201).json({ message: "تم اضافه القسم بنجاح" });
   } catch (error) {
     console.error("Error occurred while creating category:", error); // عرض تفاصيل الخطأ
     res.status(500).json({ message: "فشل في اضافه القسم" });
+  }
+});
+
+// ==================================
+// @desc Delete category
+// @route /api/category/:id
+// @method DELETE
+// @access private (only admin)
+// ==================================
+module.exports.deleteCategory = asyncHandler(async (req, res) => {
+  try {
+    // get category from database
+    const category = await CategoryModel.findById(req.params.id);
+    if (!category) {
+      res.status(404).json({ message: "Category not found" });
+    }
+
+    // delete category from database
+    await CategoryModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "تم مسح التصنيف بنجاح" });
+  } catch (error) {
+    res.status(500).json({ message: "حدث خطا اثناء مسح التصنيف" });
   }
 });
