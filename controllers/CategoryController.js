@@ -5,6 +5,32 @@ const {
   ValidateUpdateCategory,
 } = require("../models/CategoryModel");
 
+
+
+
+
+
+
+// ==================================
+// @desc Git All Category
+// @route /api/category
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.getOneCategory = asyncHandler(async (req, res) => {
+  const category = await CategoryModel.findById(req.params.id);
+
+  if (!category) {
+    return res.status(404).json({ message: "لا يوجد قسم لهذا المعرف" });
+  }
+
+  return res.status(200).json({ data: category });
+});
+
+
+
+
+
 // ==================================
 // @desc Git All Category
 // @route /api/category
@@ -19,6 +45,10 @@ module.exports.getAllCategory = asyncHandler(async (req, res) => {
     res.status(404).json({ message: "فشل في جلب الاقسام" });
   }
 });
+
+
+
+
 
 // ==================================
 // @desc Create a new category
@@ -52,10 +82,13 @@ module.exports.createCategory = asyncHandler(async (req, res) => {
 
     res.status(201).json({ message: "تم اضافه القسم بنجاح" });
   } catch (error) {
-    console.error("Error occurred while creating category:", error); // عرض تفاصيل الخطأ
+    console.error("Error occurred while creating category:", error);
     res.status(500).json({ message: "فشل في اضافه القسم" });
   }
 });
+
+
+
 
 // ==================================
 // @desc Delete category
