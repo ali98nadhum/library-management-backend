@@ -12,8 +12,8 @@ const {
 
 
 // ==================================
-// @desc Git All Category
-// @route /api/category
+// @desc Git Category by id
+// @route /api/category/id
 // @method GET
 // @access private (only admin)
 // ==================================
@@ -85,6 +85,36 @@ module.exports.createCategory = asyncHandler(async (req, res) => {
     console.error("Error occurred while creating category:", error);
     res.status(500).json({ message: "فشل في اضافه القسم" });
   }
+});
+
+
+
+// ==================================
+// @desc Git update category
+// @route /api/category/id
+// @method PUSH
+// @access private (only admin)
+// ==================================
+module.exports.updateCategory = asyncHandler(async (req, res) => {
+  // get category from database
+  const category = await CategoryModel.findById(req.params.id);
+  if (!category) {
+    return res.status(404).json({ message: "لا يوجد تصنيف لهذا المعرف" });
+  }
+
+  // Validate input data
+  const { error } = ValidateUpdateCategory(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  // update category data
+  category.title = req.body.title;
+
+  // save updated category in database
+  await category.save();
+
+  return res.status(200).json({ message: "تم تحديث الفئه بنجاح" });
 });
 
 
