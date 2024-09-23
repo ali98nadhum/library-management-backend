@@ -167,6 +167,7 @@ function ValidateUpdateBook(obj) {
 module.exports = {
     BookModel,
     ValidateCreateBook,
+    ValidateUpdateBook
 };
 
 

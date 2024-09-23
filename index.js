@@ -21,6 +21,7 @@ app.use(cors({
 
 // Routes
 app.use("/api/category" , require("./routes/categoryRoute"));
+app.use("/api/book" , require("./routes/BookRoute"));
 
 
 // Run Server
