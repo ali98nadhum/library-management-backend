@@ -4,6 +4,7 @@ const {
   ValidateCreateCategory,
   ValidateUpdateCategory,
 } = require("../models/CategoryModel");
+const { BookModel } = require("../models/BookModel");
 
 
 
@@ -18,13 +19,26 @@ const {
 // @access private (only admin)
 // ==================================
 module.exports.getOneCategory = asyncHandler(async (req, res) => {
+  const page = req.query.page * 1 || 1; 
+  const limit = req.query.limit * 1 || 6; 
+  const skip = (page - 1) * limit;
+
+
   const category = await CategoryModel.findById(req.params.id);
 
   if (!category) {
     return res.status(404).json({ message: "لا يوجد قسم لهذا المعرف" });
   }
 
-  return res.status(200).json({ data: category });
+  const books = await BookModel
+    .find()
+    .skip(skip)
+    .limit(limit);
+
+    // books counts 
+  const totalBook = await BookModel.countDocuments();
+
+  return res.status(200).json({ data: category , books , total: totalBook  });
 });
 
 
