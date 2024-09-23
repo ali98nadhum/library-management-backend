@@ -14,6 +14,23 @@ const {
 // @method POST
 // @access private (only admin)
 // ==================================
+module.exports.getAllBook = asyncHandler(async(req , res) => {
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 6 || 6;
+    const skip = (page-1) * limit;
+
+    const books = await BookModel.find({}).skip(skip).limit(limit);
+  res.status(200).json({results:books.length , page , data:books});
+})
+
+
+
+// ==================================
+// @desc Create new book
+// @route /api/book
+// @method POST
+// @access private (only admin)
+// ==================================
 module.exports.createBook = asyncHandler(async (req, res) => {
   //   cheack if not found image
   if (!req.file) {

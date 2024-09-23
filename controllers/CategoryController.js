@@ -38,7 +38,7 @@ module.exports.getOneCategory = asyncHandler(async (req, res) => {
     // books counts 
   const totalBook = await BookModel.countDocuments();
 
-  return res.status(200).json({ data: category , books , total: totalBook  });
+  return res.status(200).json({ data: category , books , total: totalBook });
 });
 
 
