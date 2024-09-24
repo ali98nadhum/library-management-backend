@@ -150,6 +150,9 @@ module.exports.deleteCategory = asyncHandler(async (req, res) => {
 
     // delete category from database
     await CategoryModel.findByIdAndDelete(req.params.id);
+
+     // delete all books related to this category
+     await BookModel.deleteMany({ category: req.params.id });
     res.status(200).json({ message: "تم مسح التصنيف بنجاح" });
   } catch (error) {
     res.status(500).json({ message: "حدث خطا اثناء مسح التصنيف" });
