@@ -101,3 +101,24 @@ module.exports.createBook = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+// ==================================
+// @desc Delete Book
+// @route /api/book/:id
+// @method DELETE
+// @access private (only admin)
+// ==================================
+module.exports.deleteBook = asyncHandler(async(req , res) => {
+  const book = await BookModel.findById(req.params.id);
+  if(!book){
+    return res.status(404).json({message: "لا يوجد كتاب بهذا المعرف"})
+  }
+
+  // delete image from cloudinary
+  await cloudinaryDeleteImage(book.image.publicId);
+
+  // delete book from database
+  await BookModel.findByIdAndDelete(req.params.id);
+  return res.status(200).json({message: "تم حذف الكتاب بنجاح"})
+})
