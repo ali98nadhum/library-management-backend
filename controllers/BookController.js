@@ -9,9 +9,9 @@ const {
 
 
 // ==================================
-// @desc Create new book
+// @desc Get all books
 // @route /api/book
-// @method POST
+// @method GET
 // @access private (only admin)
 // ==================================
 module.exports.getAllBook = asyncHandler(async(req , res) => {
@@ -22,6 +22,22 @@ module.exports.getAllBook = asyncHandler(async(req , res) => {
     const books = await BookModel.find({}).skip(skip).limit(limit);
   res.status(200).json({results:books.length , page , data:books});
 })
+
+// ==================================
+// @desc Get book by id
+// @route /api/book/:id
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.getBookById = asyncHandler(async(req , res) => {
+  const book = await BookModel.findById(req.params.id);
+  if(!book){
+    return res.status(404).json({message: "لم يتم العثور على كتاب مرتبط بهذا المعرف"})
+  }
+
+  res.status(200).json({data: book})
+})
+
 
 
 
