@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const {OrderModel} = require("../models/OrderModel")
+const {OrderModel , validateCreateOrder} = require("../models/OrderModel")
 const {BookModel} = require("../models/BookModel");
 
 
@@ -34,7 +34,17 @@ module.exports.getAllOrder = asyncHandler(async (req, res) => {
 // @access private (only admin)
 // ==================================
 module.exports.createOrder = asyncHandler(async (req, res) => {
-    const { custmerName, books, status } = req.body; // توقع مصفوفة من معرفات الكتب
+
+    const { custmerName, books, status } = req.body; 
+
+
+    // validate input data
+  const { error } = validateCreateOrder(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+
 
     // تحقق من وجود الكتب في قاعدة البيانات
     const bookDetails = await BookModel.find({ _id: { $in: books } });
