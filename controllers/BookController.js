@@ -202,3 +202,40 @@ module.exports.deleteBook = asyncHandler(async(req , res) => {
   await BookModel.findByIdAndDelete(req.params.id);
   return res.status(200).json({message: "تم حذف الكتاب بنجاح"})
 })
+
+
+
+
+
+
+// ==================================
+// @desc Search for a book by title
+// @route /api/book/search
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.searchBook = asyncHandler(async (req, res) => {
+  const { searchTerm } = req.query;
+
+  // check if found book
+  if (!searchTerm) {
+    return res.status(400).json({ message: "يرجى تقديم مصطلح للبحث." });
+  }
+
+  // custom search term
+  const searchCriteria = {
+    $or: [
+      { title: { $regex: searchTerm, $options: 'i' } }, // بحث عن العنوان
+      { author: { $regex: searchTerm, $options: 'i' } } // بحث عن المؤلف
+    ]
+  };
+
+  // search book in database
+  const books = await BookModel.find(searchCriteria);
+
+  if (books.length === 0) {
+    return res.status(404).json({ message: "لم يتم العثور على كتب تتطابق مع المعايير المحددة." });
+  }
+
+  res.status(200).json({ results: books.length, data: books });
+});

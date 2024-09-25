@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {createBook, getAllBook, getBookById, deleteBook, updateBook} = require("../controllers/BookController");
+const {createBook, getAllBook, getBookById, deleteBook, updateBook, searchBook} = require("../controllers/BookController");
 const photoUpload = require("../middlewares/photoUpload");
 
 
@@ -13,6 +13,9 @@ router.route("/:id")
 .get(getBookById)
 .delete(deleteBook)
 .patch(photoUpload.single("image") , updateBook)
+
+router.route("/books/search")
+.get(searchBook)
 
 
 module.exports = router;
