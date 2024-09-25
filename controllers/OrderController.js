@@ -4,6 +4,29 @@ const {BookModel} = require("../models/BookModel");
 
 
 
+
+// ==================================
+// @desc Get All Order
+// @route /api/orders
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.getAllOrder = asyncHandler(async (req, res) => {
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 6;
+    const skip = (page - 1) * limit;
+
+    const orders = await OrderModel.find({})
+        .skip(skip)
+        .limit(limit)
+        .populate('books', 'title');
+
+    res.status(200).json({ results: orders.length, page, data: orders });
+});
+
+
+
+
 // ==================================
 // @desc Create a new Order
 // @route /api/orders

@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const {createOrder} = require("../controllers/OrderController")
+const {createOrder, getAllOrder} = require("../controllers/OrderController")
 
 
-router.route("")
+router.route("/")
 .post(createOrder)
+.get(getAllOrder)
 
 
 
