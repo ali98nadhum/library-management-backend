@@ -102,6 +102,51 @@ module.exports.createOrder = asyncHandler(async (req, res) => {
 
 
 // ==================================
+// @desc Update order
+// @route /api/orders/:id
+// @method PATCH
+// @access private (only admin)
+// ==================================
+module.exports.updateOrder = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+
+
+    // التحقق من صحة الحالة المدخلة
+    const validStatuses = ['جاري التجهيز', 'تم التجهيز', 'تم الالغاء'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ message: "حالة الطلب غير صالحة. يجب أن تكون 'جاري التجهيز' أو 'تم التجهيز' أو 'تم الالغاء'." });
+    }
+
+    // العثور على الطلب
+    const order = await OrderModel.findById(req.params.id);
+    if (!order) {
+        return res.status(404).json({ message: "لم يتم العثور على الطلب" });
+    }
+
+    // التحقق إذا كانت الحالة الحالية "تم الالغاء" فلا يمكن التغيير مرة أخرى
+    if (order.status === 'تم الالغاء') {
+        return res.status(400).json({ message: "لا يمكن تعديل طلب تم إلغاؤه" });
+    }
+
+    // تحديث حالة الطلب
+    order.status = status;
+    await order.save();
+
+    // إذا كانت الحالة "تم الالغاء"، قم بإعادة النسخ إلى المخزن
+    if (status === 'تم الالغاء') {
+        for (const bookId of order.books) {
+            await BookModel.updateOne({ _id: bookId }, { $inc: { quantity: 1 } });
+        }
+    }
+
+    // استرجاع تفاصيل الطلب مع معلومات الكتب باستخدام populate
+    const updatedOrder = await OrderModel.findById(order._id).populate('books', 'title');
+
+    res.status(200).json({ message: "تم تحديث حالة الطلب بنجاح" });
+});
+
+
+// ==================================
 // @desc Delete Order
 // @route /api/orders/:id
 // @method DELETE

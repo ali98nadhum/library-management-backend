@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {createOrder, getAllOrder, getOrderById, deleteOrder} = require("../controllers/OrderController")
+const {createOrder, getAllOrder, getOrderById, deleteOrder, updateOrder} = require("../controllers/OrderController")
 
 
 router.route("/")
@@ -9,5 +9,6 @@ router.route("/")
 router.route("/:id")
 .get(getOrderById)
 .delete(deleteOrder)
+.patch(updateOrder)
 
 module.exports = router;
