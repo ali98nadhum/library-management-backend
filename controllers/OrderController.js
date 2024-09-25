@@ -99,3 +99,19 @@ module.exports.createOrder = asyncHandler(async (req, res) => {
 
     res.status(201).json({ message: "تم انشاء الطلب بنجاح", order: populatedOrder });
 });
+
+
+// ==================================
+// @desc Delete Order
+// @route /api/orders/:id
+// @method DELETE
+// @access private (only admin)
+// ==================================
+module.exports.deleteOrder = asyncHandler(async(req , res) => {
+    const order = await OrderModel.findByIdAndDelete(req.params.id);
+    if(!order){
+        return res.status(404).json({message: "لم يتم العثور على الطلب"})
+    }
+
+    return res.status(200).json({message: "تم حذف الطلب بنجاح"})
+})
