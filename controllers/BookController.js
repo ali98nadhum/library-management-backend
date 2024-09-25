@@ -110,26 +110,43 @@ module.exports.createBook = asyncHandler(async (req, res) => {
 // @method Pache
 // @access private (only admin)
 // ==================================
-module.exports.updateBook = asyncHandler(async(req, res) => {
+module.exports.updateBook = asyncHandler(async (req, res) => {
+  // check if book exists
   const book = await BookModel.findById(req.params.id);
   if (!book) {
     return res.status(404).json({ message: "لا يوجد كتاب مرتبط بهذا المعرف" });
   }
+
+  // validate input data
 
   const { error } = ValidateUpdateBook(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
 
+  let updateData = {};
+
+  // check if update image
+
   if (req.file) {
-    const uploadedImage = await cloudinaryUploadImage(req.file.buffer, req.file.originalname);
-    book.image = {
-      url: uploadedImage.secure_url,
-      publicId: uploadedImage.public_id,
+    const uploadedImage = await cloudinaryUploadImage(
+      req.file.buffer,
+      req.file.originalname
+    );
+    updateData = {
+      image: {
+        url: uploadedImage.secure_url,
+        publicId: uploadedImage.public_id,
+      },
     };
+
+    // delete old image
+
+    await cloudinaryDeleteImage(book.image.publicId);
   }
 
-  const updatedData = {
+  updateData = {
+    ...updateData,
     title: req.body.title,
     author: req.body.author,
     price: req.body.price,
@@ -141,17 +158,26 @@ module.exports.updateBook = asyncHandler(async(req, res) => {
   };
 
   // إزالة الحقول غير المحددة (undefined) من updatedData
-  Object.keys(updatedData).forEach(key => {
-    if (updatedData[key] === undefined) {
-      delete updatedData[key];
+  Object.keys(updateData).forEach((key) => {
+    if (updateData[key] === undefined) {
+      delete updateData[key];
     }
   });
 
-  Object.assign(book, updatedData);
+  Object.assign(book, updateData);
 
-  await book.save();
+  // save updated data to database
 
-  return res.status(200).json({ message: "تم تحديث المعلومات بنجاح", book });
+  const updatedBook = await BookModel.findByIdAndUpdate(
+    req.params.id,
+    updateData,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  return res.status(200).json({ message: "تم تحديث المعلومات بنجاح" });
 });
 
 
