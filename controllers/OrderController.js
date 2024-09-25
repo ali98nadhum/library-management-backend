@@ -25,6 +25,23 @@ module.exports.getAllOrder = asyncHandler(async (req, res) => {
 });
 
 
+// ==================================
+// @desc Get Order by id
+// @route /api/orders/:id
+// @method GET
+// @access private (only admin)
+// ==================================
+module.exports.getOrderById = asyncHandler(async(req , res) => {
+    const order = await OrderModel.findById(req.params.id)
+       .populate('books', 'title');
+       if(!order){
+        return res.status(404).json({message: "لم يتم العثور على الطلب"})
+       }
+
+       return res.status(200).json(order);
+})
+
+
 
 
 // ==================================
