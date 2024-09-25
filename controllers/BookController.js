@@ -103,6 +103,60 @@ module.exports.createBook = asyncHandler(async (req, res) => {
 
 
 
+
+// ==================================
+// @desc Update book
+// @route /api/book/:id
+// @method Pache
+// @access private (only admin)
+// ==================================
+module.exports.updateBook = asyncHandler(async(req, res) => {
+  const book = await BookModel.findById(req.params.id);
+  if (!book) {
+    return res.status(404).json({ message: "لا يوجد كتاب مرتبط بهذا المعرف" });
+  }
+
+  const { error } = ValidateUpdateBook(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  if (req.file) {
+    const uploadedImage = await cloudinaryUploadImage(req.file.buffer, req.file.originalname);
+    book.image = {
+      url: uploadedImage.secure_url,
+      publicId: uploadedImage.public_id,
+    };
+  }
+
+  const updatedData = {
+    title: req.body.title,
+    author: req.body.author,
+    price: req.body.price,
+    quantity: req.body.quantity,
+    bookststatus: req.body.bookststatus,
+    totalpage: req.body.totalpage,
+    publishedDate: req.body.publishedDate,
+    category: req.body.category,
+  };
+
+  // إزالة الحقول غير المحددة (undefined) من updatedData
+  Object.keys(updatedData).forEach(key => {
+    if (updatedData[key] === undefined) {
+      delete updatedData[key];
+    }
+  });
+
+  Object.assign(book, updatedData);
+
+  await book.save();
+
+  return res.status(200).json({ message: "تم تحديث المعلومات بنجاح", book });
+});
+
+
+
+
 // ==================================
 // @desc Delete Book
 // @route /api/book/:id

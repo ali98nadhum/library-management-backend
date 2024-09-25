@@ -149,6 +149,8 @@ function ValidateUpdateBook(obj) {
             .messages({
                 'number.base': 'عدد الصفحات مطلوب ويجب أن يكون رقمًا',
             }),
+            price: joi.number(),
+            quantity: joi.number(),
 
         publishedDate: joi.number()
             .messages({
