@@ -50,7 +50,6 @@ module.exports.createNewInvoice = asyncHandler(async (req, res) => {
         }
     });
 
-    // إرجاع الفاتورة مع جميع معلومات الطلب
     res.status(201).json({ message: "تم إنشاء الفاتورة بنجاح", invoice: populatedInvoice });
 });
 
