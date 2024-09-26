@@ -1,9 +1,12 @@
 const router = require("express").Router();
-const {createNewInvoice} = require("../controllers/InvoiceController")
+const {createNewInvoice, deleteInvoice} = require("../controllers/InvoiceController")
 
 
 router.route("/")
 .post(createNewInvoice)
+
+router.route("/:id")
+.delete(deleteInvoice)
 
 
 module.exports = router;

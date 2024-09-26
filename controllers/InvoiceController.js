@@ -53,3 +53,20 @@ module.exports.createNewInvoice = asyncHandler(async (req, res) => {
     // إرجاع الفاتورة مع جميع معلومات الطلب
     res.status(201).json({ message: "تم إنشاء الفاتورة بنجاح", invoice: populatedInvoice });
 });
+
+
+
+// ==================================
+// @desc delete invoice
+// @route /api/invoice/:id
+// @method DELETE
+// @access private (only admin)
+// ==================================
+module.exports.deleteInvoice = asyncHandler(async(req , res) => {
+    const invoice = await InvoiceModel.findByIdAndDelete(req.params.id);
+    if(!invoice){
+        return res.status(404).json({message: "لم يتم العثور على الفاتورة"})
+    }
+
+    return res.status(200).json({message:"تم حذف الفاتوره بنجاح"})
+})
