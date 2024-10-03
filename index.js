@@ -24,6 +24,7 @@ app.use("/api/category" , require("./routes/categoryRoute"));
 app.use("/api/book" , require("./routes/BookRoute"));
 app.use("/api/orders" , require("./routes/OrderRoute"));
 app.use("/api/invoice" , require("./routes/InvoiceRoute"));
+app.use("/api/user" , require("./routes/UserRoute"))
 
 
 // Run Server
