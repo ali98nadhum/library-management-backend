@@ -1,2 +1,2 @@
-const asyncHandler = require("express-async-handler");
-const {UserModel}  = require("../models/UserModel")
+const {UserModel}  = requirconst asyncHandler = require("express-async-handler");
+e("../models/UserModel")
